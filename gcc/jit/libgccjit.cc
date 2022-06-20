@@ -3965,6 +3965,51 @@ gcc_jit_type_get_aligned (gcc_jit_type *type,
   return (gcc_jit_type *)type->get_aligned (alignment_in_bytes);
 }
 
+void
+gcc_jit_function_add_attribute (gcc_jit_function *func,
+				gcc_jit_fn_attribute attribute)
+{
+  RETURN_IF_FAIL (func, NULL, NULL, "NULL func");
+
+  func->add_attribute (attribute);
+}
+
+void
+gcc_jit_function_add_string_attribute (gcc_jit_function *func,
+				       gcc_jit_fn_attribute attribute,
+				       const char* value)
+{
+  RETURN_IF_FAIL (func, NULL, NULL, "NULL func");
+
+  func->add_string_attribute (attribute, value);
+}
+
+/* This function adds an attribute with multiple integer values.  For example
+   `nonnull(1, 2)`.  The numbers in `values` are supposed to map how they
+   should be written in C code.  So for `nonnull(1, 2)`, you should pass `1`
+   and `2` in `values` (and set `length` to `2`). */
+void
+gcc_jit_function_add_integer_array_attribute (gcc_jit_function *func,
+					      gcc_jit_fn_attribute attribute,
+					      const int* values,
+					      size_t length)
+{
+  RETURN_IF_FAIL (func, NULL, NULL, "NULL func");
+  RETURN_IF_FAIL (values, NULL, NULL, "NULL values");
+
+  func->add_integer_array_attribute (attribute, values, length);
+}
+
+void
+gcc_jit_lvalue_add_string_attribute (gcc_jit_lvalue *variable,
+				     gcc_jit_variable_attribute attribute,
+				     const char* value)
+{
+  RETURN_IF_FAIL (variable, NULL, NULL, "NULL variable");
+
+  variable->add_string_attribute (attribute, value);
+}
+
 /* Public entrypoint.  See description in libgccjit.h.
 
    After error-checking, the real work is done by the

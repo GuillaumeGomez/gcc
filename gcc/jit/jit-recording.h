@@ -23,6 +23,10 @@ along with GCC; see the file COPYING3.  If not see
 
 #include "jit-common.h"
 #include "jit-logging.h"
+#include "libgccjit.h"
+
+#include <string>
+#include <vector>
 
 class timer;
 
@@ -1216,7 +1220,8 @@ public:
     m_link_section (NULL),
     m_reg_name (NULL),
     m_tls_model (GCC_JIT_TLS_MODEL_NONE),
-    m_alignment (0)
+    m_alignment (0),
+    m_string_attributes ()
   {}
 
   playback::lvalue *
@@ -1236,6 +1241,9 @@ public:
   as_rvalue () { return this; }
 
   const char *access_as_rvalue (reproducer &r) override;
+
+  void add_string_attribute (gcc_jit_variable_attribute attribute, const char* value);
+
   virtual const char *access_as_lvalue (reproducer &r);
   virtual bool is_global () const { return false; }
   void set_tls_model (enum gcc_jit_tls_model model);
@@ -1249,6 +1257,8 @@ protected:
   string *m_reg_name;
   enum gcc_jit_tls_model m_tls_model;
   unsigned m_alignment;
+  std::vector<std::pair<gcc_jit_variable_attribute,
+	      std::string>> m_string_attributes;
 };
 
 class param : public lvalue
@@ -1342,6 +1352,10 @@ public:
 
   rvalue *get_address (location *loc);
 
+  void add_attribute (gcc_jit_fn_attribute attribute);
+  void add_string_attribute (gcc_jit_fn_attribute attribute, const char* value);
+  void add_integer_array_attribute (gcc_jit_fn_attribute attribute, const int* value, size_t length);
+
 private:
   string * make_debug_string () final override;
   void write_reproducer (reproducer &r) final override;
@@ -1357,6 +1371,9 @@ private:
   auto_vec<local *> m_locals;
   auto_vec<block *> m_blocks;
   type *m_fn_ptr_type;
+  std::vector<gcc_jit_fn_attribute> m_attributes;
+  std::vector<std::pair<gcc_jit_fn_attribute, std::string>> m_string_attributes;
+  std::vector<std::pair<gcc_jit_fn_attribute, std::vector<int>>> m_int_array_attributes;
 };
 
 class block : public memento
