@@ -1366,6 +1366,7 @@ public:
      Implements the post-error-checking part of
      gcc_jit_rvalue_get_type.  */
   type * get_type () const { return m_type; }
+  void set_type (type * new_type);
 
   playback::rvalue *
   playback_rvalue () const

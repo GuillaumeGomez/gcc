@@ -4063,6 +4063,13 @@ recording::rvalue::access_field (recording::location *loc,
   return result;
 }
 
+void
+recording::rvalue::set_type (type *new_type)
+{
+  gcc_assert (new_type);
+  m_type = new_type;
+}
+
 /* Create a recording::dereference_field_rvalue instance and add it to
    the rvalue's context's list of mementos.
 
