@@ -1366,7 +1366,6 @@ public:
      Implements the post-error-checking part of
      gcc_jit_rvalue_get_type.  */
   type * get_type () const { return m_type; }
-  void set_type (type * new_type);
 
   playback::rvalue *
   playback_rvalue () const
@@ -1464,6 +1463,8 @@ public:
   void set_register_name (const char *reg_name);
   void set_alignment (unsigned bytes);
   unsigned get_alignment () const { return m_alignment; }
+
+  void set_type (type * new_type);
 
 protected:
   string *m_link_section;
@@ -1895,6 +1896,27 @@ private:
 private:
   function *m_function;
   function *m_personality_function;
+};
+
+class memento_of_set_type_lvalue : public memento
+{
+public:
+  memento_of_set_type_lvalue (context *ctx,
+			      lvalue *value,
+			      type *new_type)
+  : memento(ctx),
+    m_value (value),
+    m_new_type (new_type) {}
+
+  void replay_into (replayer *r) final override;
+
+private:
+  string * make_debug_string () final override;
+  void write_reproducer (reproducer &r) final override;
+
+private:
+  lvalue *m_value;
+  type *m_new_type;
 };
 
 class memento_of_new_rvalue_from_vector : public rvalue

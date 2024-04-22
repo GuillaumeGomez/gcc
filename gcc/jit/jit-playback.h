@@ -749,6 +749,8 @@ public:
   type *
   get_type () { return new type (TREE_TYPE (m_inner)); }
 
+  void set_type (type *new_type);
+
   rvalue *
   access_field (location *loc,
 		field *field);

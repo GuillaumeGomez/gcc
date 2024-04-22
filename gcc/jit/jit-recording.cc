@@ -4063,13 +4063,6 @@ recording::rvalue::access_field (recording::location *loc,
   return result;
 }
 
-void
-recording::rvalue::set_type (type *new_type)
-{
-  gcc_assert (new_type);
-  m_type = new_type;
-}
-
 /* Create a recording::dereference_field_rvalue instance and add it to
    the rvalue's context's list of mementos.
 
@@ -4277,6 +4270,40 @@ recording::rvalue::get_debug_string_parens (enum precedence outer_prec)
   return m_parenthesized_string->c_str ();
 }
 
+/* Implementation of recording::memento::make_debug_string for
+   setting a new type on a rvalue.  */
+
+recording::string *
+recording::memento_of_set_type_lvalue::make_debug_string ()
+{
+  return string::from_printf (m_ctxt,
+			      "%s",
+			      m_new_type->get_debug_string ());
+}
+
+/* Implementation of recording::memento::write_reproducer for setting the new
+   type of a rvalue.  */
+
+void
+recording::memento_of_set_type_lvalue::write_reproducer (reproducer &r)
+{
+  r.write ("    gcc_jit_lvalue_set_type (%s,\n"
+	   "                             %s);\n",
+	   r.get_identifier (get_context ()),
+	   r.get_identifier_as_type (m_new_type));
+}
+
+void
+recording::lvalue::set_type (type *new_type)
+{
+  gcc_assert (new_type);
+
+  recording::memento_of_set_type_lvalue *result =
+    new memento_of_set_type_lvalue (m_ctxt, this, new_type);
+  m_ctxt->record (result);
+
+  m_type = new_type;
+}
 
 /* The implementation of class gcc::jit::recording::lvalue.  */
 
@@ -5923,6 +5950,9 @@ recording::memento_of_typeinfo::write_reproducer (reproducer &r)
     case TYPE_INFO_SIZE_OF:
       type = "size";
       break;
+    default:
+      type = "NULL";
+      break;
   }
   const char *id = r.make_identifier (this, "rvalue");
   r.write ("  gcc_jit_rvalue *%s =\n"
@@ -7534,6 +7564,17 @@ void
 recording::memento_of_set_personality_function::replay_into (replayer *r)
 {
   m_function->playback_function ()->set_personality_function (m_personality_function->playback_function ());
+}
+
+/* The implementation of class gcc::jit::recording::memento_of_set_type_lvalue.  */
+
+/* Implementation of pure virtual hook recording::memento::replay_into
+   for recording::memento_of_set_type_lvalue.  */
+
+void
+recording::memento_of_set_type_lvalue::replay_into (replayer *r)
+{
+  m_value->playback_lvalue ()->set_type (m_new_type->playback_type ());
 }
 
 /* The implementation of class gcc::jit::recording::eval.  */

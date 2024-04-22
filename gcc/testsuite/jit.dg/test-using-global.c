@@ -33,8 +33,6 @@ create_code (gcc_jit_context *ctxt, void *user_data)
 	return internal_global;
      }
   */
-  gcc_jit_type *int_type =
-    gcc_jit_context_get_type (ctxt, GCC_JIT_TYPE_INT);
   gcc_jit_type *float_type = gcc_jit_context_get_type (ctxt,
     GCC_JIT_TYPE_FLOAT);
 
@@ -45,10 +43,13 @@ create_code (gcc_jit_context *ctxt, void *user_data)
 				float_type,
 				"exported_global");
 
+  gcc_jit_type *int_type =
+    gcc_jit_context_get_type (ctxt, GCC_JIT_TYPE_INT);
+
   gcc_jit_rvalue *r_exported_global =
     gcc_jit_lvalue_as_rvalue (exported_global);
   CHECK_VALUE (gcc_jit_rvalue_get_type (r_exported_global), float_type);
-  gcc_jit_rvalue_set_type (r_exported_global, int_type);
+  gcc_jit_lvalue_set_type (exported_global, int_type);
   CHECK_VALUE (gcc_jit_rvalue_get_type (r_exported_global), int_type);
 
   gcc_jit_lvalue *imported_global =

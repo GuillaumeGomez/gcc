@@ -2275,6 +2275,12 @@ set_personality_function (function *personality_function)
   DECL_FUNCTION_PERSONALITY (m_inner_fndecl) = personality_function->as_fndecl ();
 }
 
+void
+playback::rvalue::set_type (type *new_type)
+{
+  TREE_TYPE (m_inner) = new_type->as_tree ();
+}
+
 /* Build a statement list for the function as a whole out of the
    lists of statements for the individual blocks, building labels
    for each block.  */

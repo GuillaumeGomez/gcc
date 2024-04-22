@@ -1769,9 +1769,9 @@ rvalue::get_type ()
 }
 
 inline void
-rvalue::set_type (type *new_type)
+lvalue::set_type (type *new_type)
 {
-  gcc_jit_rvalue_set_type (get_inner_rvalue (), new_type);
+  gcc_jit_lvalue_set_type (get_inner_lvalue (), new_type);
 }
 
 inline rvalue

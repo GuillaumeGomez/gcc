@@ -1993,15 +1993,15 @@ gcc_jit_rvalue_get_type (gcc_jit_rvalue *rvalue)
 /* Public entrypoint.  See description in libgccjit.h.
 
    After error-checking, the real work is done by the
-   gcc::jit::recording::rvalue::set_type method, in
+   gcc::jit::recording::lvalue::set_type method, in
    jit-recording.h.  */
 
 void
-gcc_jit_rvalue_set_type (gcc_jit_rvalue *rvalue, gcc_jit_type *new_type)
+gcc_jit_lvalue_set_type (gcc_jit_lvalue *lvalue, gcc_jit_type *new_type)
 {
-  RETURN_IF_FAIL (rvalue, NULL, NULL, "NULL rvalue");
+  RETURN_IF_FAIL (lvalue, NULL, NULL, "NULL lvalue");
 
-  rvalue->set_type (new_type);
+  lvalue->set_type (new_type);
 }
 
 /* Verify that NUMERIC_TYPE is non-NULL, and that it is a "numeric"

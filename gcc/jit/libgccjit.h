@@ -1080,7 +1080,7 @@ extern gcc_jit_type *
 gcc_jit_rvalue_get_type (gcc_jit_rvalue *rvalue);
 
 extern void
-gcc_jit_rvalue_set_type (gcc_jit_rvalue *rvalue, gcc_jit_type *new_type);
+gcc_jit_lvalue_set_type (gcc_jit_lvalue *lvalue, gcc_jit_type *new_type);
 
 /* Integer constants. */
 extern gcc_jit_rvalue *
